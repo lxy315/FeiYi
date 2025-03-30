@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户注册</title>
+    <style>
+        a {
+            text-decoration: none;
+            color: #d10e35;
+        }
+        div {
+            border: 6px solid rgb(238, 90, 90);
+            background-image: url("f7e73360b9244be8fa70b298abc0dc3.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        * {
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+            font-family: kaiti;
+        }
+        h2 {
+            color: rgb(2, 45, 58);
+            font-family: kaiti;
+            font-size: 40px;
+        }
+        input {
+            margin: 10px 0;
+            padding: 5px;
+            width: 200px;
+        }
+        button {
+            margin: 10px 0;
+            padding: 5px 20px;
+            background-color: #d10e35;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #b30d2f;
+        }
+        #error-message {
+            color: red;
+            margin: 10px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h2>用户注册</h2>
+        <form id="registerForm">
+            <div>
+                <label for="username">用户名：</label><br>
+                <input type="text" id="username" name="username" required><br>
+            </div>
+            <div>
+                <label for="password">密码：</label><br>
+                <input type="password" id="password" name="password" required><br>
+            </div>
+            <div>
+                <label for="email">邮箱：</label><br>
+                <input type="email" id="email" name="email" required><br>
+            </div>
+            <div>
+                <label for="phone">手机号：</label><br>
+                <input type="tel" id="phone" name="phone" required><br>
+            </div>
+            <div id="error-message"></div>
+            <button type="submit">注册</button>
+        </form>
+        <p>已有账号？<a href="登录.html">点击登录</a></p>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.style.display = 'none';
+            
+            const userData = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value
+            };
+
+            try {
+                console.log('正在发送注册请求...');
+                const response = await fetch('http://localhost:8080/api/users/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                console.log('收到响应:', response.status);
+                
+                if (response.ok) {
+                    alert('注册成功！');
+                    window.location.href = '登录.html';
+                } else {
+                    const errorText = await response.text();
+                    console.error('注册失败:', errorText);
+                    errorMessage.textContent = '注册失败：' + errorText;
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('请求错误:', error);
+                errorMessage.textContent = '注册失败：无法连接到服务器，请确保服务器已启动';
+                errorMessage.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html> 
